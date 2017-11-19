@@ -12,6 +12,7 @@ def test_good_quiz(class_, teacher):
     quiz = Quiz(
         name=u'Object-oriented data structure design',
         class_=class_,
+        percentage=100,
         owner=teacher,
         questions=[
             QuizQuestion(

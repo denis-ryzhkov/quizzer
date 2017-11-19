@@ -6,6 +6,7 @@ import datetime
 from quizzer.models.class_ import Class
 from quizzer.models.model import Model, MAX_LEN
 from quizzer.models.teacher import Teacher
+from quizzer.models.semester import Semester
 
 ### Quiz
 
@@ -19,6 +20,7 @@ class Quiz(Model):
     FIELDS = dict(
         name=dict(types=unicode, length=(1, MAX_LEN)),
         class_=dict(types=Class),
+        percentage=dict(types=int),
         owner=dict(types=Teacher),
         created=dict(types=datetime.datetime, default=lambda: datetime.datetime.utcnow()),
         questions=dict(types=list, validate=validate_questions),  # Document-oriented structure fits better here. May map to relational if we use RDBMS.
@@ -73,4 +75,13 @@ class QuizAnswers(Model):
         quiz=dict(types=Quiz),
         answers=dict(types=dict, validate=validate_answers, default=dict),  # See above re document-oriented structure.
         grade=dict(types=int, null=True, default=None),
+    )
+
+### QuizAssignment
+
+class QuizAssignment(Model):
+
+    FIELDS = dict(
+        quiz=dict(types=Quiz),
+        semester=dict(types=Semester),
     )
