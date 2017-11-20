@@ -10,9 +10,13 @@ class MetaModel(type):
     """
     Metaclass of Model, see its docstring.
     """
+    models = set()
+
     def __new__(metacls, cls_name, cls_bases, cls_dict):
         cls_dict['objects'] = set()
-        return super(MetaModel, metacls).__new__(metacls, cls_name, cls_bases, cls_dict)
+        cls = super(MetaModel, metacls).__new__(metacls, cls_name, cls_bases, cls_dict)
+        metacls.models.add(cls)
+        return cls
 
 class Model(object):
     """

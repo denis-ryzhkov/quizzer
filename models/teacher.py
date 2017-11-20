@@ -46,9 +46,9 @@ class Teacher(Person):
 
         ### cache correct shoices for this quiz
 
-        correct_choices = {}
+        correct_choices_by_question_index = {}  # correct_choices_by_question_index[question_index: int] == correct_choices: set(choice_index: int)
         for question_index, question in enumerate(quiz.questions):
-            correct_choices[question_index] = set(choice_index
+            correct_choices_by_question_index[question_index] = set(choice_index
                 for choice_index, choice in enumerate(question.choices)
                 if choice.is_correct
             )
@@ -60,13 +60,25 @@ class Teacher(Person):
                 if quiz_answers.quiz == quiz:
 
                     correct_answers = 0
-                    for question_index in correct_choices:
+                    for question_index, correct_choices in correct_choices_by_question_index.iteritems():
                         selected_choices = quiz_answers.answers.get(question_index)
-                        if selected_choices == correct_choices[question_index]:
-                            # TODO: Ask how to grade, maybe we can value more the more selected and correct choices are intersected.
-                            correct_answers += 1
+                        if selected_choices is not None:
 
-                    correct_ratio = correct_answers / float(len(correct_choices))
+                            # Idea to find a size of intersection of selected_choices and correct_choices has a flaw:
+                            # a student can just select all possible choices to get +1 correct answer, which is bad.
+                            # If we substract for incorrect choice, then we can get negative number of correct answers, which is bad too:
+                            #
+                            # if correct_choices:
+                            #     correct_answers += len(selected_choices.intersection(correct_choices)) / float(len(correct_choices))
+                            #     correct_answers -= len(selected_choices - correct_choices) / float(len(correct_choices))
+                            # elif not selected_choices:
+                            #     correct_answers += 1
+
+                            # So, let's just compare for exact equality:
+                            if selected_choices == correct_choices:
+                                correct_answers += 1
+
+                    correct_ratio = correct_answers / float(len(correct_choices_by_question_index))
                     quiz_answers.grade = MIN_GRADE + int(round((MAX_GRADE - MIN_GRADE) * correct_ratio))  # 50..100
 
     ### get_total_grades

@@ -30,7 +30,8 @@ def test_bad_class():
 
 ### test Class.teacher default and delete - and these features of abstract base Model too
 
-def test_class_teacher_default(class_):
+def test_class_teacher_default():
+    class_ = Class(number=u'6.00', name=u'Introduction to Computer Science and Programming')
     assert hasattr(class_, 'teacher')
     assert class_.teacher is None
 
